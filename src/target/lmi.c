@@ -77,6 +77,7 @@ static void lmi_add_flash(target *t, size_t length)
 bool lmi_probe(target *t)
 {
 	uint32_t did1 = target_mem_read32(t, LMI_SCB_DID1);
+	DEBUG("lmi_probe: did1 = 0x%lX\n", (did1>>16));
 	switch (did1 >> 16) {
 	case 0x1049:	/* LM3S3748 */
 		t->driver = lmi_driver_str;
@@ -105,6 +106,10 @@ bool lmi_probe(target *t)
 		t->driver = lmi_driver_str;
 		target_add_ram(t, 0x20000000, 0x40000);
 		lmi_add_flash(t, 0x100000);
+	case 0x1019:    /* TM4C1290NCPDT */
+		t->driver = lmi_driver_str;
+		target_add_ram(t, 0x20000000, 0x40000); /* 256 kB SRAM */
+		lmi_add_flash(t, 0x100000); /* 1024 kB of flash */
 		t->target_options |= CORTEXM_TOPT_INHIBIT_SRST;
 		return true;
 	}
